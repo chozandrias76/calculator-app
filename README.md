@@ -1,2 +1,5 @@
 # calculator-app
-A simple sci-calculatr
+Make a scientific calculator using only:
+  1.Html
+  2.CSS/SASS
+  3.vanillaJS/Jquery
