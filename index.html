@@ -10,75 +10,69 @@
     <!-- Place favicon.ico in the root directory -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Tangerine">
     <link rel="stylesheet" href="styles.css">
-    <script>
-        var clock = {
+    <script src="https://www.google-analytics.com/analytics.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous">
+  </script>
+  <script>
+  $(function() {
+      $(".calculatorButtons").on("mouseover", function(){
+        $(this).css("color", "black");
+      }).on("mouseout", function(){
+        $(this).removeAttr('style');
+      }).on("click", function(){
+        displayString.setValue($(this).text());
+      });
+      var storedValue;
+      var displayString = {
+          displayValue: "",
 
-            digits: ["zero", "one", "two", "three", "foure", "five", "six", "seven", "eight", "nine"],
+          setValue: function(value){
+               if(isNaN(Number(value)) === false){
+                   //console.log(value);
+                   for(var i = 8; i > 0; i--){
+                    //    if(this.displayValue[i] == 0){
+                    //        this.displayValue = value;
+                    //    }
 
-            init: function() {
-                var $digit = $('.digit');
+                    //    else{
+                    //        this.displayValue[i+1] = this.displayValue[i];
+                    //        this.displayValue[i] = value;
+                    //    }
+                    this.displayValue[i+1] = this.displayValue[i];
+                    this.displayValue[i] = value;
+                   }
+                    this.displayValue += value;
+                    this.displayValue = this.displayValue.substring(this.displayValue.length-7, this.displayValue.length);
+                    
+                }
+                else{
 
-                // Ugly....
-                this.hour = [$($digit[0]), $($digit[1])];
-                this.min = [$($digit[2]), $($digit[3])];
-                this.sec = [$($digit[4]), $($digit[5])];
+                       this.displayValue= 0;
+                   
+                }
+                updateDisplay();
+          },
 
+          getValue: function(){
+              return this.displayValue;
+          }
+      };
 
-                this.drawInterval(this.drawSecond, function(time) {
-                    return 1000 - time[3];
-                })
+      function updateDisplay(){
+          var digits = displayString.getValue().split('').reverse().join('');
+          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){
+              $(this).html(digits[i]);
+              console.log(digits);
+          });
+          
+      }
 
-                this.drawInterval(this.drawMinute, function(time) {
-                    return 60000 - time[2] * 1000 - time[3];
-                })
-
-
-                this.drawInterval(this.drawHour, function(time) {
-                    return (60 - time[1]) * 60000 - time[2] * 1000 - time[3];
-                })
-
-            },
-
-            getTimeArray: function() {
-                var dat = new Date();
-                return [dat.getHours(), dat.getMinutes(), dat.getSeconds(), dat.getMilliseconds()];
-            },
-
-            drawInterval: function(func, timeCallback) {
-                var time = this.getTimeArray();
-
-                func.call(this, time);
-
-                var that = this;
-                setTimeout(function() {
-                    that.drawInterval(func, timeCallback);
-                }, timeCallback(time));
-            },
-
-            drawHour: function(time) {
-                this.drawDigits(this.hour, time[0]);
-            },
-
-            drawMinute: function(time) {
-                this.drawDigits(this.min, time[1]);
-            },
-
-            drawSecond: function(time) {
-                this.drawDigits(this.sec, time[2]);
-            },
-
-            drawDigits: function(digits, digit) {
-                var ten = Math.floor(digit / 10);
-                var one = Math.floor(digit % 10);
-
-                digits[0].attr('class', 'digit ' + this.digits[ten]);
-                digits[1].attr('class', 'digit ' + this.digits[one]);
-            }
-
-        };
-
-        clock.init();
-    </script>
+      //console.log(displayDigits);
+  });
+  </script>
     <style>
         #canvasBody {
             text-align: center;
@@ -94,7 +88,7 @@
             background-color: silver;
         }
         
-        #calculatorButtons {
+        .calculatorButtons {
             background-color: darkslategrey;
             display: inline-block;
             line-height: 40px;
@@ -150,7 +144,6 @@
         
     </style>
 
-    <script src="https://www.google-analytics.com/analytics.js"></script>
 </head>
 
 <body>
@@ -161,39 +154,39 @@
                     Fancy Text Area
                 </div>
                 <div class="row" id="display-screen">
-                    <div class="cell">0</div
-                    ><div class="cell">0</div
-                    ><div class="cell">0</div
-                    ><div class="cell">0</div
-                    ><div class="cell">0</div
-                    ><div class="cell">0</div
-                    ><div <div class="cell" style="border-right:2px solid darkslategray">0</div>
+                    <div class="cell" id="cell-pos-0">0</div
+                    ><div class="cell" id="cell-pos-1">0</div
+                    ><div class="cell" id="cell-pos-2">0</div
+                    ><div class="cell" id="cell-pos-3">0</div
+                    ><div class="cell" id="cell-pos-4">0</div
+                    ><div class="cell" id="cell-pos-5">0</div
+                    ><div <div class="cell"  id="cell-pos-0" style="border-right:2px solid darkslategray">0</div>
                 </div>
             </div>
             <div id="body">
                 <div class="row">
-                    <div class="buttonContainer"><span id="calculatorButtons">7</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">8</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">9</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">/</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-7" class="calculatorButtons">7</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-8" class="calculatorButtons">8</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-9" class="calculatorButtons">9</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-/" class="calculatorButtons">/</span></div>
                 </div>
                 <div class="row">
-                    <div class="buttonContainer"><span id="calculatorButtons">4</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">5</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">6</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">x</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-4" class="calculatorButtons">4</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-5" class="calculatorButtons">5</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-6" class="calculatorButtons">6</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-x" class="calculatorButtons">x</span></div>
                 </div>
                 <div class="row">
-                    <div class="buttonContainer"><span id="calculatorButtons">1</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">2</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">3</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">-</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-1" class="calculatorButtons">1</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-2" class="calculatorButtons">2</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-3" class="calculatorButtons">3</span></div>
+                    <div class="buttonContainer"><span id="calculator-button--" class="calculatorButtons">-</span></div>
                 </div>
                 <div class="row">
-                    <div class="buttonContainer"><span id="calculatorButtons">0</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">.</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">=</span></div>
-                    <div class="buttonContainer"><span id="calculatorButtons">+</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-0" class="calculatorButtons">0</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-." class="calculatorButtons">.</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-=" class="calculatorButtons">=</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-+" class="calculatorButtons">+</span></div>
                 </div>
                 <div class="row"></div>
                 <div class="row"></div>
