@@ -25,33 +25,25 @@
       }).on("click", function(){
         displayString.setValue($(this).text());
       });
-      var storedValue;
-      var displayString = {
+
+      var storedValue; //Save value for arithmatic
+
+      var displayString = { //Object that allows us to modify what is going to be written on the display
           displayValue: "",
 
           setValue: function(value){
                if(isNaN(Number(value)) === false){
                    //console.log(value);
-                   for(var i = 8; i > 0; i--){
-                    //    if(this.displayValue[i] == 0){
-                    //        this.displayValue = value;
-                    //    }
-
-                    //    else{
-                    //        this.displayValue[i+1] = this.displayValue[i];
-                    //        this.displayValue[i] = value;
-                    //    }
-                    this.displayValue[i+1] = this.displayValue[i];
-                    this.displayValue[i] = value;
+                   for(var i = $("#display-screen").children().length; i > 0; i--){
+                    this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
+                    this.displayValue[i] = value; //Change first digit to clicked value
                    }
-                    this.displayValue += value;
-                    this.displayValue = this.displayValue.substring(this.displayValue.length-7, this.displayValue.length);
-                    
-                }
-                else{
+                    this.displayValue += value; //Add the value to the string
+                    this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
 
-                       this.displayValue= 0;
-                   
+                }
+                else{ //If we have a special character, do something else
+                     this.displayValue = "";
                 }
                 updateDisplay();
           },
@@ -61,16 +53,18 @@
           }
       };
 
-      function updateDisplay(){
-          var digits = displayString.getValue().split('').reverse().join('');
-          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){
-              $(this).html(digits[i]);
-              console.log(digits);
+      function updateDisplay(){ //Grabs the actual string value to display and changes the divs
+          var digits = displayString.getValue().split('').reverse().join(''); //Screen writes from right to left
+          if(digits != "") //Only update the screen if the string contains numbers
+          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){//Reverse div array to write right to left
+              $(this).html(digits[i]); //Update the screen with all the new values
           });
-          
+          else //Clear the screen
+          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){//Reverse div array to write right to left
+              $(this).html("0"); //Update the screen with all the new values
+          });
       }
 
-      //console.log(displayDigits);
   });
   </script>
     <style>
@@ -81,40 +75,51 @@
             height: 100%;
             padding: 10%;
         }
-        
+
         #calculatorBody {
             width: 300px;
             height: 600px;
             background-color: silver;
         }
-        
+
         .calculatorButtons {
             background-color: darkslategrey;
             display: inline-block;
             line-height: 40px;
             width: 40px;
             height: 40px;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select:none;
+            user-select:none;
+            -o-user-select:none;
+            cursor: pointer;
         }
-        
+
+        .calculatorButtons:hover{
+          cursor: pointer;
+        }
+
         .buttonContainer {
             display: inline-block;
             padding-left: 5px;
             padding-right: 5px;
         }
-        
+
         #text-area {
             color: rgb(6%, 26.5%, 6%);
             font-family: 'Tangerine', serif;
             font-size: 48px;
         }
-        
+
         .row {
             padding-top: 20px;
             padding-bottom: 10px;
         }
         @font-face{
         font-family:'digital-clock-font';
-        src: url('/home/colin/Documents/Web Dev/Calculator App/calculator-app/digital-7.ttf');
+        src: url('./fonts/digital-7.ttf');
+        src: url('/home/colin/Documents/Web%20Dev/Calculator%20App/calculator-app/fonts/digital-7.ttf');
         }
         .cell {
             display: inline-block;
@@ -136,12 +141,12 @@
         #display-screen {
             padding: 0;
         }
-        
+
         body {
             background-color: burlywood;
         }
 
-        
+
     </style>
 
 </head>
@@ -160,6 +165,7 @@
                     ><div class="cell" id="cell-pos-3">0</div
                     ><div class="cell" id="cell-pos-4">0</div
                     ><div class="cell" id="cell-pos-5">0</div
+                    ><div class="cell" id="cell-pos-6">0</div
                     ><div <div class="cell"  id="cell-pos-0" style="border-right:2px solid darkslategray">0</div>
                 </div>
             </div>
