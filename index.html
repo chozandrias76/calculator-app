@@ -26,7 +26,7 @@
         displayString.setValue($(this).text());
       });
 
-      var storedValue; //Save value for arithmatic
+      var storedValue, storedArith; //Save value for arithmatic
 
       var displayString = { //Object that allows us to modify what is going to be written on the display
           displayValue: "",
@@ -42,8 +42,20 @@
                     this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
 
                 }
-                else{ //If we have a special character, do something else
-                     this.displayValue = "";
+                if(value == "." && this.displayValue.indexOf(".") != -1){
+                  for(var i = $("#display-screen").children().length; i > 0; i--){
+                   this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
+                   this.displayValue[i] = value; //Change first digit to clicked value
+                  }
+                   this.displayValue += value; //Add the value to the string
+                   this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+
+                }
+                else if(isNaN(Number(value)) && value != "."){ //If we have a special character, do something else
+                    storedValue = parseInt(this.displayValue);
+                    storedArith = value;
+
+                    this.displayValue = "";
                 }
                 updateDisplay();
           },
