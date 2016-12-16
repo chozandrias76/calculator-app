@@ -1,0 +1,103 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #canvasBody {
+            text-align: center;
+            margin: 0 auto;
+            width: 300px;
+            height: 100%;
+        }
+        
+        #calculatorBody {
+            width: 300px;
+            height: 600px;
+            background-color: cadetblue;
+        }
+        
+        #calculatorButtons {
+            background-color: darkslategrey;
+            display: inline-block;
+            line-height: 40px;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .buttonContainer {
+            display: inline-block;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        
+        .row {
+            padding-top: 20px;
+            padding-bottom: 10px;
+        }
+    </style>
+
+    <script src="https://www.google-analytics.com/analytics.js"></script>
+</head>
+
+<body>
+    <div id="canvasBody">
+        <div style="" id="calculatorBody">
+            <div class="row" id="header">
+                <div class="row" id="text-area">
+                    Fancy Text Area
+                </div>
+                <div class="row" id="display-screen">
+                    00000000000000
+                </div>
+            </div>
+            <div id="body">
+                <div class="row">
+
+                    <div class="buttonContainer"><span id="calculatorButtons">7</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">8</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">9</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">/</span></div>
+
+                </div>
+                <div class="row">
+                    <div class="buttonContainer"><span id="calculatorButtons">4</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">5</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">6</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">x</span></div>
+                </div>
+                <div class="row">
+                    <div class="buttonContainer"><span id="calculatorButtons">1</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">2</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">3</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">-</span></div>
+                </div>
+                <div class="row">
+                    <div class="buttonContainer"><span id="calculatorButtons">0</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">.</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">=</span></div>
+                    <div class="buttonContainer"><span id="calculatorButtons">+</span></div>
+                </div>
+                <div class="row"></div>
+                <div class="row"></div>
+                <div class="row"></div>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js">
+    </script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')
+    </script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
