@@ -26,8 +26,13 @@
         displayString.setValue($(this).text());
       });
 
-      var storedValue, storedArith; //Save value for arithmatic
+      $(document).keypress(function(event) {
+            //alert('Handler for .keypress() called. - ' + String.fromCharCode(event.charCode));
+            var keyPress = String.fromCharCode(event.charCode);
+            displayString.setValue(String.fromCharCode(event.charCode));
+      });
 
+      var storedValue, storedArith; //Save value for arithmatic
       var displayString = { //Object that allows us to modify what is going to be written on the display
           displayValue: "",
 
@@ -40,15 +45,14 @@
                    }
                     this.displayValue += value; //Add the value to the string
                     this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
-
                 }
-                if(value == "." && this.displayValue.indexOf(".") != -1){
-                  for(var i = $("#display-screen").children().length; i > 0; i--){
-                   this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
-                   this.displayValue[i] = value; //Change first digit to clicked value
-                  }
-                   this.displayValue += value; //Add the value to the string
-                   this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+                if(value == "." && this.displayValue.indexOf(".") == -1){
+                    for(var i = $("#display-screen").children().length; i > 0; i--){
+                     this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
+                     this.displayValue[i] = value; //Change first digit to clicked value
+                    }
+                     this.displayValue += value; //Add the value to the string
+                     this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
 
                 }
                 else if(isNaN(Number(value)) && value != "."){ //If we have a special character, do something else
@@ -66,6 +70,7 @@
       };
 
       function updateDisplay(){ //Grabs the actual string value to display and changes the divs
+        console.log(displayString);
           var digits = displayString.getValue().split('').reverse().join(''); //Screen writes from right to left
           if(digits != "") //Only update the screen if the string contains numbers
           var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){//Reverse div array to write right to left
