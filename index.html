@@ -60,6 +60,8 @@
                     return `${this.x} ${this.operand} ${this.y}`;
                 }
             }
+
+            MathExpression.init();
             var displayString = { //Object that allows us to modify what is going to be written on the display
                 displayValue: "",
 
@@ -72,6 +74,7 @@
                         }
                         this.displayValue += value; //Add the value to the string
                         this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+
                     }
                     if (value == "." && this.displayValue.indexOf(".") == -1) {
                         for (var i = $("#display-screen").children().length; i > 0; i--) {
@@ -84,17 +87,17 @@
                     } else if (isNaN(Number(value))) { //If we have a special character, do something else
                         if (value != "." && value != "=") { //Special treatment for operators
                             if (MathExpression.operand == "") { //Sets our expression if it is brand new
-                                  MathExpression.x = parseInt(this.displayValue);
-                                  MathExpression.operand = value;
-                            } else {
-                                MathExpression.operand = value;
+                                  MathExpression.x = parseInt(this.displayValue); //Sets our first varaible
+                                  MathExpression.operand = value; //Sets our operand
+                            } else {//What happens when we click an operator while we already have one
+                                MathExpression.operand = value; //Set to the new operator
                             }
                             this.displayValue = "";
                         }
                         else if (value == "=") { //If our special character is '='
-                            if (MathExpression.operand != "") {
-                                MathExpression.y = this.displayValue;
-                                doMaths();
+                            if (MathExpression.operand != "") { //Make sure math is possible
+                                MathExpression.y = this.displayValue; //Change our y to what number is on display
+                                doMaths(); //Do maths with our Expression
                                 MathExpression.reset();
                             }
                         }
@@ -135,7 +138,6 @@
                     $(this).html("0"); //Update the screen with all the new values
                 });
             }
-
         });
     </script>
     <style>
