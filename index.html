@@ -11,79 +11,133 @@
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Tangerine">
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.google-analytics.com/analytics.js"></script>
-<script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous">
-  </script>
-  <script>
-  $(function() {
-      $(".calculatorButtons").on("mouseover", function(){
-        $(this).css("color", "black");
-      }).on("mouseout", function(){
-        $(this).removeAttr('style');
-      }).on("click", function(){
-        displayString.setValue($(this).text());
-      });
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous">
+    </script>
+    <script>
+        $(function() {
 
-      $(document).keypress(function(event) {
-            //alert('Handler for .keypress() called. - ' + String.fromCharCode(event.charCode));
-            var keyPress = String.fromCharCode(event.charCode);
-            displayString.setValue(String.fromCharCode(event.charCode));
-      });
+            $(".calculatorButtons").on("mouseover", function() { //Works for any click on a calculator button
+                $(this).css("color", "white");
+            }).on("mouseout", function() {
+                $(this).removeAttr('style');
+            }).on("click", function() {
+                $(this).css("background-color", "#2c4645");
+                // setTimeout(function(){
+                //   $(this).removeAttr('style');
+                // }, 2000);
+                displayString.setValue($(this).text());
+            });
 
-      var storedValue, storedArith; //Save value for arithmatic
-      var displayString = { //Object that allows us to modify what is going to be written on the display
-          displayValue: "",
+            $(document).keypress(function(event) {
+                //alert('Handler for .keypress() called. - ' + String.fromCharCode(event.charCode));
+                var keyPress = String.fromCharCode(event.charCode);
+                displayString.setValue(String.fromCharCode(event.charCode));
+            });
 
-          setValue: function(value){
-               if(isNaN(Number(value)) === false){
-                   //console.log(value);
-                   for(var i = $("#display-screen").children().length; i > 0; i--){
-                    this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
-                    this.displayValue[i] = value; //Change first digit to clicked value
-                   }
-                    this.displayValue += value; //Add the value to the string
-                    this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
-                }
-                if(value == "." && this.displayValue.indexOf(".") == -1){
-                    for(var i = $("#display-screen").children().length; i > 0; i--){
-                     this.displayValue[i+1] = this.displayValue[i]; //Push the last digit to left
-                     this.displayValue[i] = value; //Change first digit to clicked value
+            var MathExpression = {
+                x: 0,
+                operand: "",
+                y: 0,
+
+                // save initial values
+                init: function() {
+                    var origValues = {};
+                    for (var prop in this) {
+                        if (this.hasOwnProperty(prop) && prop != "origValues") {
+                            origValues[prop] = this[prop];
+                        }
                     }
-                     this.displayValue += value; //Add the value to the string
-                     this.displayValue = this.displayValue.substring(this.displayValue.length-$("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+                    this.origValues = origValues;
+                },
+                // restore initial values
+                reset: function() {
+                    for (var prop in this.origValues) {
+                        this[prop] = this.origValues[prop];
+                    }
+                },
 
+                value: function() {
+                    return `${this.x} ${this.operand} ${this.y}`;
                 }
-                else if(isNaN(Number(value)) && value != "."){ //If we have a special character, do something else
-                    storedValue = parseInt(this.displayValue);
-                    storedArith = value;
+            }
+            var displayString = { //Object that allows us to modify what is going to be written on the display
+                displayValue: "",
 
-                    this.displayValue = "";
+                setValue: function(value) {
+                    if (isNaN(Number(value)) === false) {
+                        //console.log(value);
+                        for (var i = $("#display-screen").children().length; i > 0; i--) {
+                            this.displayValue[i + 1] = this.displayValue[i]; //Push the last digit to left
+                            this.displayValue[i] = value; //Change first digit to clicked value
+                        }
+                        this.displayValue += value; //Add the value to the string
+                        this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+                    }
+                    if (value == "." && this.displayValue.indexOf(".") == -1) {
+                        for (var i = $("#display-screen").children().length; i > 0; i--) {
+                            this.displayValue[i + 1] = this.displayValue[i]; //Push the last digit to left
+                            this.displayValue[i] = value; //Change first digit to clicked value
+                        }
+                        this.displayValue += value; //Add the value to the string
+                        this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen").children().length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+
+                    } else if (isNaN(Number(value))) { //If we have a special character, do something else
+                        if (value != "." && value != "=") { //Special treatment for operators
+                            if (MathExpression.operand == "") { //Sets our expression if it is brand new
+                                  MathExpression.x = parseInt(this.displayValue);
+                                  MathExpression.operand = value;
+                            } else {
+                                MathExpression.operand = value;
+                            }
+                            this.displayValue = "";
+                        }
+                        else if (value == "=") { //If our special character is '='
+                            if (MathExpression.operand != "") {
+                                MathExpression.y = this.displayValue;
+                                doMaths();
+                                MathExpression.reset();
+                            }
+                        }
+                        else if(value == "Clr"){
+                          MathExpression.reset();
+                          this.displayValue = "";
+                        }
+
+                    }
+                    updateDisplay();
+                },
+
+                getValue: function() {
+                    return this.displayValue;
                 }
-                updateDisplay();
-          },
+            };
 
-          getValue: function(){
-              return this.displayValue;
-          }
-      };
+            function doMaths() {
+              try{
+                displayString.displayValue = eval(MathExpression.value()).toString();
+                throw "An exception!"
+              }
+              catch (e){
+                console.log(e);
+              }
+                //console.log(eval(MathExpression.value()));
+            };
 
-      function updateDisplay(){ //Grabs the actual string value to display and changes the divs
-        console.log(displayString);
-          var digits = displayString.getValue().split('').reverse().join(''); //Screen writes from right to left
-          if(digits != "") //Only update the screen if the string contains numbers
-          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){//Reverse div array to write right to left
-              $(this).html(digits[i]); //Update the screen with all the new values
-          });
-          else //Clear the screen
-          var displayScreen =  [].reverse.call($("#display-screen").children()).each(function(i){//Reverse div array to write right to left
-              $(this).html("0"); //Update the screen with all the new values
-          });
-      }
+            function updateDisplay() { //Grabs the actual string value to display and changes the divs
+                //console.log(displayString);
+                var digits = displayString.getValue().split('').reverse().join(''); //Screen writes from right to left
+                if (digits != "") //Only update the screen if the string contains numbers
+                    var displayScreen = [].reverse.call($("#display-screen").children()).each(function(i) { //Reverse div array to write right to left
+                    $(this).html(digits[i]); //Update the screen with all the new values
+                });
+                else //Clear the screen
+                    var displayScreen = [].reverse.call($("#display-screen").children()).each(function(i) { //Reverse div array to write right to left
+                    $(this).html("0"); //Update the screen with all the new values
+                });
+            }
 
-  });
-  </script>
+        });
+    </script>
     <style>
         #canvasBody {
             text-align: center;
@@ -101,20 +155,21 @@
 
         .calculatorButtons {
             background-color: darkslategrey;
+            color: black;
             display: inline-block;
             line-height: 40px;
             width: 40px;
             height: 40px;
             -moz-user-select: none;
             -webkit-user-select: none;
-            -ms-user-select:none;
-            user-select:none;
-            -o-user-select:none;
+            -ms-user-select: none;
+            user-select: none;
+            -o-user-select: none;
             cursor: pointer;
         }
 
-        .calculatorButtons:hover{
-          cursor: pointer;
+        .calculatorButtons:hover {
+            cursor: pointer;
         }
 
         .buttonContainer {
@@ -133,11 +188,13 @@
             padding-top: 20px;
             padding-bottom: 10px;
         }
-        @font-face{
-        font-family:'digital-clock-font';
-        src: url('./fonts/digital-7.ttf');
-        src: url('/home/colin/Documents/Web%20Dev/Calculator%20App/calculator-app/fonts/digital-7.ttf');
+
+        @font-face {
+            font-family: 'digital-clock-font';
+            src: url('./fonts/digital-7.ttf');
+            src: url('/home/colin/Documents/Web%20Dev/Calculator%20App/calculator-app/fonts/digital-7.ttf');
         }
+
         .cell {
             display: inline-block;
             background-color: khaki;
@@ -152,7 +209,7 @@
             line-height: 35px;
             font-size: 70px;
             font-family: 'digital-clock-font';
-            color:darkslategrey
+            color: darkslategrey
         }
 
         #display-screen {
@@ -162,8 +219,6 @@
         body {
             background-color: burlywood;
         }
-
-
     </style>
 
 </head>
@@ -176,14 +231,14 @@
                     Fancy Text Area
                 </div>
                 <div class="row" id="display-screen">
-                    <div class="cell" id="cell-pos-0">0</div
-                    ><div class="cell" id="cell-pos-1">0</div
-                    ><div class="cell" id="cell-pos-2">0</div
-                    ><div class="cell" id="cell-pos-3">0</div
-                    ><div class="cell" id="cell-pos-4">0</div
-                    ><div class="cell" id="cell-pos-5">0</div
-                    ><div class="cell" id="cell-pos-6">0</div
-                    ><div <div class="cell"  id="cell-pos-0" style="border-right:2px solid darkslategray">0</div>
+                    <div class="cell" id="cell-pos-0">0</div>
+                    <div class="cell" id="cell-pos-1">0</div>
+                    <div class="cell" id="cell-pos-2">0</div>
+                    <div class="cell" id="cell-pos-3">0</div>
+                    <div class="cell" id="cell-pos-4">0</div>
+                    <div class="cell" id="cell-pos-5">0</div>
+                    <!-- <div class="cell" id="cell-pos-6">0</div> Disabled for now because of clean formatter-->
+                    <div <div class="cell" id="cell-pos-f" style="border-right:2px solid darkslategray">0</div>
                 </div>
             </div>
             <div id="body">
@@ -197,7 +252,7 @@
                     <div class="buttonContainer"><span id="calculator-button-4" class="calculatorButtons">4</span></div>
                     <div class="buttonContainer"><span id="calculator-button-5" class="calculatorButtons">5</span></div>
                     <div class="buttonContainer"><span id="calculator-button-6" class="calculatorButtons">6</span></div>
-                    <div class="buttonContainer"><span id="calculator-button-x" class="calculatorButtons">x</span></div>
+                    <div class="buttonContainer"><span id="calculator-button-*" class="calculatorButtons">*</span></div>
                 </div>
                 <div class="row">
                     <div class="buttonContainer"><span id="calculator-button-1" class="calculatorButtons">1</span></div>
@@ -211,6 +266,9 @@
                     <div class="buttonContainer"><span id="calculator-button-=" class="calculatorButtons">=</span></div>
                     <div class="buttonContainer"><span id="calculator-button-+" class="calculatorButtons">+</span></div>
                 </div>
+                <div class="row">
+                    <div class="buttonContainer"><span id="calculator-button-Clr" class="calculatorButtons">Clr</span></div>
+                  </div>
                 <div class="row"></div>
                 <div class="row"></div>
                 <div class="row"></div>
