@@ -1,20 +1,7 @@
 $(function() {
 
     $(".calculatorButtons")
-        .on("mouseover", function() { //Works for any click on a calculator button
-            $(this)
-                .css("color", "white");
-        })
-        .on("mouseout", function() {
-            $(this)
-                .removeAttr('style');
-        })
         .on("click", function() {
-            $(this)
-                .css("background-color", "#2c4645");
-            // setTimeout(function(){
-            //   $(this).removeAttr('style');
-            // }, 2000);
             displayString.handleInput($(this)
                 .text());
         });
@@ -68,23 +55,30 @@ $(function() {
     }
 
     MathExpression.init();
+    var justMathed = false;
     var displayString = { //Object that allows us to modify what is going to be written on the display
         displayValue: "",
-
         handleInput: function(value) {
-            if (value == "/n") value == "=";
+
             if (isNaN(Number(value)) === false) { //If the value is a number
-                //console.log(value);
-                for (var i = $("#display-screen")
-                        .children()
-                        .length; i > 0; i--) {
-                    this.displayValue[i + 1] = this.displayValue[i]; //Push the last digit to left
-                    this.displayValue[i] = value; //Change first digit to clicked value
+                if(justMathed){//If we have numbers on the screen and we just did a calculation
+                  MathExpression.reset(); //We want to set up a new expression
+                  this.displayValue = ""; //Reset the display
+                  updateDisplay(); //Draw the display
+                  justMathed = false; //And not go through the loop again
                 }
-                this.displayValue += value; //Add the value to the string
-                this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen")
-                    .children()
-                    .length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+
+                  for (var i = $("#display-screen")
+                          .children()
+                          .length; i > 0; i--) {
+                      this.displayValue[i + 1] = this.displayValue[i]; //Push the last digit to left
+                      this.displayValue[i] = value; //Change first digit to clicked value
+                  }
+                  this.displayValue += value; //Add the value to the string
+                  this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen")
+                      .children()
+                      .length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+
 
             } else if (isNaN(Number(value))) { //If we have anything but a number
                 if (value == "*" ||
@@ -158,7 +152,7 @@ $(function() {
             displayString.displayValue = eval(MathExpression.value())
                 .toString();
             MathExpression.x = displayString.displayValue;
-            //throw "An exception!"
+            justMathed = true;
             throw "Error"
         } catch (e) {
             this.displayValue = e;
