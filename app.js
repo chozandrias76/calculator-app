@@ -15,15 +15,29 @@ $(function() {
             // setTimeout(function(){
             //   $(this).removeAttr('style');
             // }, 2000);
-            displayString.setValue($(this)
+            displayString.handleInput($(this)
                 .text());
         });
 
+    var validChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "=", "*", "/", "."];
+    var validChar = false;
     $(document)
         .keypress(function(event) {
-            //alert('Handler for .keypress() called. - ' + String.fromCharCode(event.charCode));
-            var keyPress = String.fromCharCode(event.charCode);
-            displayString.setValue(String.fromCharCode(event.charCode));
+            console.log(event.charCode)
+            var keyPress
+            if (event.charCode == 13) {
+                keyPress = String.fromCharCode(61);
+            } else {
+                keyPress = String.fromCharCode(event.charCode);
+            }
+            validChars.forEach(elem => {
+                if (keyPress.includes(elem))
+                    validChar = true;
+            })
+            if (validChar) {
+                displayString.handleInput(keyPress);
+                validChar = false;
+            }
         });
 
     var MathExpression = {
@@ -57,7 +71,8 @@ $(function() {
     var displayString = { //Object that allows us to modify what is going to be written on the display
         displayValue: "",
 
-        setValue: function(value) {
+        handleInput: function(value) {
+            if (value == "/n") value == "=";
             if (isNaN(Number(value)) === false) { //If the value is a number
                 //console.log(value);
                 for (var i = $("#display-screen")
@@ -119,7 +134,6 @@ $(function() {
                             doMaths(); //Do the last type of math operation
                         }
 
-                        //MathExpression.reset();
                     } else if (MathExpression.operand == "Clr") {
                         MathExpression.reset();
                         this.displayValue = "";
@@ -145,10 +159,10 @@ $(function() {
                 .toString();
             MathExpression.x = displayString.displayValue;
             //throw "An exception!"
+            throw "Error"
         } catch (e) {
-            console.log(e);
+            this.displayValue = e;
         }
-        //console.log(eval(MathExpression.value()));
     };
 
     function updateDisplay() { //Grabs the actual string value to display and changes the divs
