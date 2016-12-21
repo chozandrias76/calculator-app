@@ -72,12 +72,31 @@ $(function() {
                     .length, this.displayValue.length); //Start replacing characters when the string is longer than display space
 
             } else if (isNaN(Number(value))) { //If we have anything but a number
-                if (value != "." && value != "=") { //Special treatment for operators
+                if (value == "*" ||
+                    value == "/" ||
+                    value == "-" ||
+                    value == "+") { //Special treatment for operators
+                    if (MathExpression.x == 0 &&
+                        MathExpression.operand == "" &&
+                        MathExpression.y == 0) { //If we have a clean expression
 
-                    MathExpression.x = parseInt(this.displayValue); //Sets our first varaible
-                    MathExpression.operand = value; //Sets our operand
+                        MathExpression.x = parseFloat(this.displayValue); //Sets our first varaible
+                        MathExpression.operand = value; //Sets our operand
+                        this.displayValue = "";
+                    } else if (MathExpression.x != 0 && MathExpression.y == 0) { //If we have an x value already
 
-                    this.displayValue = "";
+                        MathExpression.x = parseFloat(this.displayValue); //Sets our first varaible
+                        MathExpression.operand = value; //Sets our operand
+                        this.displayValue = "";
+
+                    } else if (MathExpression.x != 0 && MathExpression.y != 0) { //If we have an x and a y
+                        MathExpression.x = parseFloat(this.displayValue);
+                        MathExpression.operand = value;
+                        MathExpression.y = 0;
+                        //MathExpression.x = displayString.displayValue;
+                        this.displayValue = "";
+                    }
+
                 } else if (value == "." && this.displayValue.indexOf(".") == -1) { //If I am pressing "." and none exists already
                     for (var i = $("#display-screen")
                             .children()
@@ -92,8 +111,14 @@ $(function() {
 
                 } else if (value == "=") { //If our special character is '='
                     if (MathExpression.operand != "") { //Make sure math is possible
-                        MathExpression.y = this.displayValue; //Change our y to what number is on display
-                        doMaths(); //Do maths with our Expression
+                        if (MathExpression.x != 0 && MathExpression.y == 0) { //If we don't have a y value yet
+                            MathExpression.y = this.displayValue; //Change our y to what number is on display
+                            doMaths(); //Do maths with our Expression
+                        } else if (MathExpression.x != 0 && MathExpression.y != 0) { //If we already have x and y values
+                            MathExpression.x = this.displayValue; //Set the x to be what is on screen
+                            doMaths(); //Do the last type of math operation
+                        }
+
                         //MathExpression.reset();
                     } else if (MathExpression.operand == "Clr") {
                         MathExpression.reset();
