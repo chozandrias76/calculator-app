@@ -74,10 +74,10 @@ $(function() {
                       this.displayValue[i + 1] = this.displayValue[i]; //Push the last digit to left
                       this.displayValue[i] = value; //Change first digit to clicked value
                   }
+                  var indexLocation = this.displayValue.includes(".") ? this.displayValue.indexOf("."):this.displayValue.length;
                   this.displayValue += value; //Add the value to the string
-                  this.displayValue = this.displayValue.substring(this.displayValue.length - $("#display-screen")
-                      .children()
-                      .length, this.displayValue.length); //Start replacing characters when the string is longer than display space
+                  this.displayValue = this.displayValue.substring(indexLocation - $("#display-screen").children().length,
+                                                                  indexLocation); //Start replacing characters when the string is longer than display space
 
 
             } else if (isNaN(Number(value))) { //If we have anything but a number
