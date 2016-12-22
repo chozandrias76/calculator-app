@@ -62,7 +62,7 @@ $(function() {
 
             if (isNaN(Number(value)) === false) { //If the value is a number
                 if(justMathed){//If we have numbers on the screen and we just did a calculation
-                  MathExpression.reset(); //We want to set up a new expression
+                  //MathExpression.reset(); //We want to set up a new expression
                   this.displayValue = ""; //Reset the display
                   updateDisplay(); //Draw the display
                   justMathed = false; //And not go through the loop again
@@ -88,15 +88,22 @@ $(function() {
                     if (MathExpression.x == 0 &&
                         MathExpression.operand == "" &&
                         MathExpression.y == 0) { //If we have a clean expression
-
                         MathExpression.x = parseFloat(this.displayValue); //Sets our first varaible
                         MathExpression.operand = value; //Sets our operand
                         this.displayValue = "";
                     } else if (MathExpression.x != 0 && MathExpression.y == 0) { //If we have an x value already
-
-                        MathExpression.x = parseFloat(this.displayValue); //Sets our first varaible
-                        MathExpression.operand = value; //Sets our operand
-                        this.displayValue = "";
+                        if(MathExpression.operand == ""){
+                          MathExpression.x = parseFloat(this.displayValue); //Sets our first varaible
+                          MathExpression.operand = value; //Sets our operand
+                          this.displayValue = "";
+                        }
+                        else{
+                          MathExpression.y = this.displayValue;
+                          doMaths();
+                          MathExpression.y = 0;
+                          this.displayValue = MathExpression.x;
+                          updateDisplay(); //Draw the display
+                        }
 
                     } else if (MathExpression.x != 0 && MathExpression.y != 0) { //If we have an x and a y
                         MathExpression.x = parseFloat(this.displayValue);
